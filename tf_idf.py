@@ -4,20 +4,17 @@ from utils.pipeline import Pipeline
 
 if __name__ == '__main__':
 
+    threshold = 1
     input_file = 'data/wos_abstracts.txt'
     output_file = 'tf_idf.txt'
-
 
     corpus = []
     with open(input_file, 'r', encoding='utf-8') as fr:
         for doc in fr:
-            corpus.append(doc)
-    print('corpus[0] :', corpus[0])
+            corpus.append(doc.strip())
 
     pipeline = Pipeline()
     result = pipeline.preprocess_corpus(corpus)
-    print('result[0] :', result[0])
-
 
     # transforms Pipeline's output format into TfidfVectorizer's input format
     docs = []
@@ -29,7 +26,6 @@ if __name__ == '__main__':
 
         if len(new_doc) > 0:
             docs.append(' '.join(new_doc))
-
 
     vectorizer = TfidfVectorizer(min_df=3)
     vectorizer.fit(docs)
@@ -51,6 +47,8 @@ if __name__ == '__main__':
     # sort and store
     with open(output_file, 'w', encoding='utf-8') as fw:
         sorted_dict = sorted(tfidf_dict.items(), key=lambda x: x[1], reverse=True)
-        for word_and_weight in sorted_dict:
-            print(f'{word_and_weight[0]}\t{word_and_weight[1]}')
-            fw.write(f'{word_and_weight[0]}\t{word_and_weight[1]}\n')
+
+        for word, weight in sorted_dict:
+            if weight > threshold:
+                print(f'{word}\t{weight[1]}')
+                fw.write(f'{word}\t{weight[1]}\n')
