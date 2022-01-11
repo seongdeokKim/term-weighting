@@ -16,7 +16,7 @@ if __name__ == '__main__':
     pipeline = Pipeline()
     result = pipeline.preprocess_corpus(corpus)
 
-    # transforms Pipeline's output format into TfidfVectorizer's input format
+    # transforms Pipeline's output type (List[List[str]]) into TfidfVectorizer's input type (List[str])
     docs = []
     for doc in result:
         new_doc = []
