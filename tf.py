@@ -1,6 +1,6 @@
 from sklearn.feature_extraction.text import CountVectorizer
 from utils.pipeline import Pipeline
-import operator
+
 
 if __name__ == '__main__':
 
