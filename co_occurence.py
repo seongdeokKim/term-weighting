@@ -1,6 +1,5 @@
 from utils.pipeline import Pipeline
 from utils.co_occur2graphml import convert_co_occur_to_graphml
-import operator
 
 
 class VocabDict:
@@ -57,7 +56,6 @@ if __name__ == '__main__':
                 new_document.append(token)
         documents.append(' '.join(new_document))
 
-
     vDict = VocabDict()
     vDictFiltered = VocabDict()
 
@@ -69,7 +67,7 @@ if __name__ == '__main__':
         for w in words:
             wid = vDict.get_id_or_add(w)
 
-            if wid not in word_counter.keys():
+            if wid not in word_counter:
                 word_counter[wid] = 1
             else:
                 word_counter[wid] += 1
@@ -77,10 +75,11 @@ if __name__ == '__main__':
     # store words that occur more than threshold in vDictFiltered
     for wid, num in word_counter.items():
         if num > word_thres:
-            vDictFiltered.get_id_or_add(vDict.get_word(wid))
+            vDictFiltered.get_id_or_add(
+                vDict.get_word(wid)
+            )
 
     vDict = None
-
 
     # compute co-occurence within a document
     co_occur_counter = {}
@@ -100,14 +99,14 @@ if __name__ == '__main__':
                 else:
                     pair = (wids[i], wids[j])
 
-                if pair not in co_occur_counter.keys():
+                if pair not in co_occur_counter:
                     co_occur_counter[pair] = 1
                 else:
                     co_occur_counter[pair] += 1
 
     # sort and store co-occurrence info.
     with open(output_file, 'w', encoding='utf-8') as fw:
-        sorted_dict = sorted(co_occur_counter.items(), key=operator.itemgetter(-1), reverse=True)
+        sorted_dict = sorted(co_occur_counter.items(), key=lambda x: x[1], reverse=True)
         for (w1_id, w2_id), freq in sorted_dict:
             if freq > pair_thres:
                 w1 = vDictFiltered.get_word(w1_id)
